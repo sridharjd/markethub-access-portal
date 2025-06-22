@@ -1,4 +1,3 @@
-
 import { 
   PortfolioOwner, 
   SubMarketer, 
@@ -8,7 +7,7 @@ import {
   StatusUpdate 
 } from '@/types/database';
 
-const API_BASE_URL = process.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // Helper function to get auth token
 const getAuthToken = () => localStorage.getItem('auth_token');
