@@ -78,6 +78,13 @@ const PortfolioManagerDashboard: React.FC = () => {
     }
   };
 
+  const handleInvestmentUpdate = (investmentId: string, status: string, amount?: number) => {
+    const investment = investments.find(inv => inv.investor_investment_id === investmentId);
+    if (investment) {
+      handleStatusUpdate(investment, status as 'refunded' | 'on_hold' | 'ncd_conversion', amount);
+    }
+  };
+
   if (isLoadingSubMarketers || isLoadingInvestments) {
     return (
       <DashboardLayout title="Portfolio Manager Dashboard">
@@ -142,47 +149,37 @@ const PortfolioManagerDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sub-Marketers List */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sub-Marketers</CardTitle>
-              <CardDescription>
-                Select a sub-marketer to view their investors
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <SubMarketerList
-                subMarketers={subMarketers}
-                selectedSubMarketer={selectedSubMarketer}
-                onSelectSubMarketer={setSelectedSubMarketer}
-              />
-            </CardContent>
-          </Card>
+          <SubMarketerList
+            subMarketers={subMarketers}
+            selectedSubMarketer={selectedSubMarketer}
+            onSubMarketerSelect={setSelectedSubMarketer}
+          />
         </div>
 
         {/* Investments Table */}
         <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {selectedSubMarketer 
-                  ? `Investments - ${selectedSubMarketer.name}`
-                  : 'All Investments'
-                }
-              </CardTitle>
-              <CardDescription>
-                {selectedSubMarketer 
-                  ? `Showing investments for ${selectedSubMarketer.name}'s investors`
-                  : 'Showing all investments across your sub-marketers'
-                }
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <InvestmentTable
-                investments={investments}
-                onStatusUpdate={handleStatusUpdate}
-              />
-            </CardContent>
-          </Card>
+          {selectedSubMarketer ? (
+            <InvestmentTable
+              investments={investments}
+              subMarketer={selectedSubMarketer}
+              onInvestmentUpdate={handleInvestmentUpdate}
+            />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>All Investments</CardTitle>
+                <CardDescription>
+                  Select a sub-marketer to view their specific investments
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-slate-500">
+                  <Users className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+                  <p>Select a sub-marketer to view investments</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </DashboardLayout>
