@@ -9,7 +9,7 @@ import { Edit3 } from 'lucide-react';
 
 interface InvestmentStatusSelectProps {
   investment: InvestmentWithDetails;
-  onStatusUpdate: (investment: InvestmentWithDetails, status: string, amount?: number) => void;
+  onStatusUpdate: (investment: InvestmentWithDetails, status: 'refunded' | 'on_hold' | 'ncd_conversion', amount?: number) => void;
 }
 
 const InvestmentStatusSelect: React.FC<InvestmentStatusSelectProps> = ({
@@ -17,7 +17,7 @@ const InvestmentStatusSelect: React.FC<InvestmentStatusSelectProps> = ({
   onStatusUpdate,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState(investment.status);
+  const [selectedStatus, setSelectedStatus] = useState<'refunded' | 'on_hold' | 'ncd_conversion'>(investment.status);
   const [amount, setAmount] = useState(investment.amount.toString());
 
   const handleSubmit = () => {
@@ -58,9 +58,10 @@ const InvestmentStatusSelect: React.FC<InvestmentStatusSelectProps> = ({
               id="status"
               value={selectedStatus}
               onChange={(e) => {
-                setSelectedStatus(e.target.value);
+                const newStatus = e.target.value as 'refunded' | 'on_hold' | 'ncd_conversion';
+                setSelectedStatus(newStatus);
                 // Auto-fill amount for "On Hold" status
-                if (e.target.value === 'on_hold') {
+                if (newStatus === 'on_hold') {
                   setAmount(investment.amount.toString());
                 }
               }}
